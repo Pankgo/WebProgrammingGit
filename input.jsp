@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
+<%@ page import = "java.sql.*"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,29 +8,51 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<table border = "1" width = "550" height = "300">
-		<tr align = "center">
-			<td>�̸�</td>
-			<td><input type = "text" name = "txtname" size = "10"></td>
-		</tr>
-		<tr align = "center">
-			<td>��ȣ</td>
-			<td><input type = "text" name = "txtname" size = "15"></td>
-		</tr>
-		<tr align = "center">
-			<td>����</td>
-			<td><input type = "text" name = "txtname" size = "30"></td>
-		</tr>
-		<tr align = "center">
-			<td>�ּ�</td>
-			<td><input type = "text" name = "txtname" size = "50"></td>
-		</tr>
-		<tr>
-			<td colspan = "2">
-				<button type = "submit">����</button>
-				<button type = "reset">����</button>
-			</td>
-		</tr>
-	</table>
+<h1>명함입력</h1><form action="<%= request.getRequestURI() %>" method="post"><table border="1"><tr><th>ID</th><td><input type="text" name="txtId" value="" /></td></tr><tr><th>이름</th><td><input type="text" name="txtName" value="" /></td></tr>
+<th>폰번호</th><td><input type="text" name="txtTelNo" value="" /></td></tr><tr><th>이메일</th><td><input type="text" name="txtEmail" value="" /></td></tr></table><br/><input type="submit" value="입력" /></form>
+	
+<%
+String url = "jdbc:oracle:thin:@localhost:1521/XE";
+String user = "system";
+String password = "1234";
+
+
+Connection conn = null;
+Statement stat = null;
+%>
+<% 
+try{
+	
+	String id = request.getParameter("txtId");
+	String name = request.getParameter("txtName");
+	String telNo = request.getParameter("txtTelNo");
+	String mail = request.getParameter("txtEmail");
+	
+
+	Class.forName("oracle.jdbc.OracleDriver");
+	conn = DriverManager.getConnection(url,user,password);
+	String sql = "Insert Into namecard (id,name,telno,mail) VALUES ('" + id + "', '" + name + "', '" + telNo + "', '" + mail + "')";
+	
+
+	
+	stat = conn.createStatement();
+	stat.executeUpdate(sql);
+	%><script>
+		alert("저장완료");
+	</script>
+	<% 
+}catch(Exception e){
+	e.printStackTrace();
+	%>
+	<script>
+		alert("오류");
+	</script>
+	<% 
+}finally{
+	if(stat != null) stat.close();
+	if(conn != null) conn.close();
+}
+%>
+	
 </body>
 </html>
